@@ -5,7 +5,7 @@ import web3 from "./web3";
 import lottery from "./lottery";
 
 class App extends React.Component {
-  state = { manager: "", players: [], balance: "" };
+  state = { manager: "", players: [], balance: "", value: "" };
 
   async componentDidMount() {
     const manager = await lottery.methods.manager().call();
@@ -25,6 +25,21 @@ class App extends React.Component {
           competing to win {web3.utils.fromWei(this.state.balance, "ether")}{" "}
           ether!
         </p>
+
+        <hr />
+
+        <form>
+          <h4>Want to try your luck?</h4>
+          <div>
+            <label for="">Amount of ether to enter</label>
+            <input
+              type="text"
+              value={this.state.value}
+              onChange={(event) => this.setState({ value: event.target.value })}
+            />
+          </div>
+          <button>Enter</button>
+        </form>
       </div>
     );
   }
