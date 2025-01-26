@@ -5,7 +5,7 @@ import web3 from "./web3";
 import lottery from "./lottery";
 
 class App extends React.Component {
-  state = { manager: "", players: [], balance: "", value: "" };
+  state = { manager: "", players: [], balance: "", value: "", message: "" };
 
   async componentDidMount() {
     const manager = await lottery.methods.manager().call();
@@ -20,10 +20,26 @@ class App extends React.Component {
 
     const accounts = await web3.eth.getAccounts();
 
+    this.setState({ message: "Waiting to transaction success..." });
+
     await lottery.methods.enter().send({
       from: accounts[0],
       value: web3.utils.toWei(this.state.value, "ether"),
     });
+
+    this.setState({ message: "You have been tered!" });
+  };
+
+  onClick = async () => {
+    const accounts = await web3.eth.getAccounts();
+
+    this.setState({ message: "Waiting on transaction success..." });
+
+    await lottery.methods.pickWinner().send({
+      from: accounts[0],
+    });
+
+    this.setState({ message: "A winner has been picked!" });
   };
 
   render() {
@@ -51,6 +67,15 @@ class App extends React.Component {
           </div>
           <button>Enter</button>
         </form>
+
+        <hr />
+
+        <h4>Ready to pick a winner?</h4>
+        <button onClick={this.onClick}>Pick a winner!</button>
+
+        <hr />
+
+        <h1>{this.state.message}</h1>
       </div>
     );
   }
